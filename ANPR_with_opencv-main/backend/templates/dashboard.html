@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  font-family: 'Poppins', sans-serif;
+}
+.dashboard-container {
+  padding: 40px;
+}
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-align: center;
+  text-shadow: 0 0 10px #38bdf8, 0 0 25px #38bdf8;
+  margin-bottom: 30px;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+.card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 15px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 4px 25px rgba(56,189,248,0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 30px rgba(56,189,248,0.3);
+}
+.card h3 {
+  color: #a5f3fc;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.card p {
+  font-size: 2.2em;
+  color: #38bdf8;
+  font-weight: bold;
+}
+iframe {
+  width: 100%;
+  height: 480px;
+  border: none;
+  border-radius: 15px;
+  background: rgba(15, 23, 42, 0.7);
+}
+</style>
+
+<div class="dashboard-container">
+  <h2>📊 Dashboard Overview</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>Total Students</h3>
+      <p>{{ total_students }}</p>
+    </div>
+    <div class="card">
+      <h3>Total Detections</h3>
+      <p>{{ total_logs }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:15px;">Recent Activity</h3>
+    <iframe src="{{ url_for('logs') }}"></iframe>
+  </div>
+</div>
+
+{% endblock %}

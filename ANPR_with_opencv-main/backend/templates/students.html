@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Title */
+.student-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-shadow: 0 0 10px #38bdf8;
+  margin-top: 40px;
+  margin-bottom: 25px;
+}
+
+/* Search Box */
+.search-box {
+  display: block;
+  margin: 0 auto 25px;
+  width: 55%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.1);
+  color: #e0f2fe;
+  font-size: 0.95rem;
+  backdrop-filter: blur(8px);
+  outline: none;
+  transition: all 0.3s;
+}
+.search-box:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+}
+
+/* Table */
+.student-table {
+  width: 88%;
+  margin: auto;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+}
+.student-table th, .student-table td {
+  padding: 10px 14px;
+  text-align: center;
+  line-height: 2.0; /* ✅ tighter spacing */
+}
+.student-table thead {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  font-weight: 600;
+}
+.student-table tbody tr {
+  transition: background 0.3s ease;
+}
+.student-table tbody tr:hover {
+  background: rgba(56, 189, 248, 0.15);
+}
+
+/* Buttons */
+.btn-add {
+  display: block;
+  margin: 30px auto;
+  background: #38bdf8;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px; /* ✅ shorter button */
+  cursor: pointer;
+  transition: all 0.3s;
+  width: fit-content;
+  text-decoration: none;
+}
+.btn-add:hover {
+  background: #0ea5e9;
+  transform: scale(1.05);
+}
+</style>
+
+<!-- Page Content -->
+<h2 class="student-title">🎓 Registered Students</h2>
+
+<input type="text" id="studentSearch" class="search-box" placeholder="Search by name, plate number, or matrix number...">
+
+<div class="table-container">
+  <table class="student-table">
+    <thead>
+      <tr>
+        <th>Plate Number</th>
+        <th>Student Name</th>
+        <th>Matrix No</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="studentBody">
+      {% for s in students %}
+      <tr>
+        <td>{{ s.plate_number }}</td>
+        <td>{{ s.name }}</td>
+        <td>{{ s.matrix_no }}</td>
+        <td>
+          <form action="{{ url_for('delete_student', id=s.id) }}" method="POST" style="display:inline;">
+            <button class="btn-add" style="background:#ef4444; padding:6px 12px;">🗑 Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<a href="{{ url_for('add_student') }}" class="btn-add">➕ Add New Student</a>
+
+<script>
+// 🔎 Search Filter
+document.getElementById("studentSearch").addEventListener("input", function() {
+  const query = this.value.toLowerCase();
+  const rows = document.querySelectorAll("#studentBody tr");
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(query) ? "" : "none";
+  });
+});
+</script>
+
+{% endblock %}

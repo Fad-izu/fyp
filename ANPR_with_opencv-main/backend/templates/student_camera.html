@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart IKM Parking - Student Camera</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: radial-gradient(circle at top, #0f172a, #1e293b, #334155);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center text-center p-6">
+  <h1 class="text-3xl font-bold text-sky-400 mb-6">🎓 Student Camera View</h1>
+  
+  <div class="bg-gray-800 rounded-2xl shadow-2xl p-4">
+    <video id="studentCamera" autoplay playsinline class="rounded-xl border-2 border-sky-500 w-[640px] h-[360px]"></video>
+  </div>
+
+  <a href="/student_portal" class="mt-6 text-sky-400 hover:underline">← Back to Student Portal</a>
+
+  <script>
+    async function startCamera() {
+      const video = document.getElementById("studentCamera");
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+      } catch (error) {
+        alert("Camera access denied or not available.");
+      }
+    }
+    startCamera();
+  </script>
+</body>
+</html>

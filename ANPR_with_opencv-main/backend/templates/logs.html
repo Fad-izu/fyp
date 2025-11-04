@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  font-family: 'Poppins', sans-serif;
+}
+.logs-container {
+  padding: 40px;
+}
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-shadow: 0 0 10px #38bdf8, 0 0 25px #38bdf8;
+  margin-bottom: 25px;
+  text-align: center;
+}
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+.search-box input, .filter-select {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: 1px solid rgba(56,189,248,0.3);
+  border-radius: 10px;
+  padding: 10px 15px;
+  outline: none;
+  transition: 0.3s;
+}
+.search-box input:focus, .filter-select:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56,189,248,0.3);
+}
+.table-box {
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 25px rgba(56,189,248,0.2);
+  backdrop-filter: blur(10px);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+.table th, .table td {
+  padding: 12px 16px;
+  text-align: center;
+}
+.table th {
+  background-color: rgba(56,189,248,0.15);
+  color: #38bdf8;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.table tr {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.table tr:hover {
+  background-color: rgba(56,189,248,0.1);
+}
+.badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+.badge-success {
+  background: rgba(34,197,94,0.8);
+  color: white;
+}
+.badge-danger {
+  background: rgba(239,68,68,0.8);
+  color: white;
+}
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.btn-danger:hover {
+  background: #dc2626;
+}
+</style>
+
+<div class="logs-container">
+  <h2>📜 Access Logs</h2>
+
+  <div class="controls">
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="🔍 Search plate number..." />
+    </div>
+
+    <select id="statusFilter" class="filter-select">
+      <option value="">Filter by Status</option>
+      <option value="GRANTED">✅ Granted</option>
+      <option value="DENIED">❌ Denied</option>
+    </select>
+
+    <button id="clearLogsBtn" class="btn-danger">🧹 Clear Logs</button>
+  </div>
+
+  <div class="table-box">
+    <table id="logsTable" class="table">
+      <thead>
+        <tr>
+          <th>Plate Number</th>
+          <th>Status</th>
+          <th>Timestamp (MYT)</th>
+        </tr>
+      </thead>
+      <tbody id="logBody">
+        {% for log in logs %}
+        <tr>
+          <td>{{ log.plate_number }}</td>
+          <td>
+            {% if log.status == 'GRANTED' %}
+              <span class="badge badge-success">GRANTED</span>
+            {% else %}
+              <span class="badge badge-danger">DENIED</span>
+            {% endif %}
+          </td>
+          <td>{{ log.timestamp.strftime("%I:%M %p | %d-%b-%Y") }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+async function refreshLogs() {
+  try {
+    const res = await fetch("/api/logs");
+    const data = await res.json();
+    const tbody = document.getElementById("logBody");
+    tbody.innerHTML = "";
+    data.forEach(log => {
+      // 🕓 Convert to Malaysia time (UTC+8)
+      const utcDate = new Date(log.timestamp);
+      const myTime = new Date(utcDate.getTime() + (8 * 60 * 60 * 1000));
+
+      // Format: 12-hour (hh:mm AM/PM | DD Mon YYYY)
+      const formattedTime = myTime.toLocaleString('en-MY', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'Asia/Kuala_Lumpur'
+      }).replace(',', ' |');
+
+      const row = `
+        <tr>
+          <td>${log.plate_number}</td>
+          <td>${log.status === "GRANTED"
+            ? '<span class="badge badge-success">GRANTED</span>'
+            : '<span class="badge badge-danger">DENIED</span>'}</td>
+          <td>${formattedTime}</td>
+        </tr>`;
+      tbody.innerHTML += row;
+    });
+    applyFilters();
+  } catch (err) {
+    console.error("⚠️ Failed to refresh logs:", err);
+  }
+}
+
+// 🔎 Filter & search
+function applyFilters() {
+  const searchValue = document.getElementById("searchInput").value.toLowerCase();
+  const statusValue = document.getElementById("statusFilter").value;
+  document.querySelectorAll("#logBody tr").forEach(row => {
+    const plate = row.cells[0].innerText.toLowerCase();
+    const status = row.cells[1].innerText.trim();
+    const match = (!searchValue || plate.includes(searchValue)) &&
+                  (!statusValue || status === statusValue);
+    row.style.display = match ? "" : "none";
+  });
+}
+
+document.getElementById("searchInput").addEventListener("input", applyFilters);
+document.getElementById("statusFilter").addEventListener("change", applyFilters);
+
+// Auto refresh logs every 5s
+setInterval(refreshLogs, 5000);
+
+// 🧹 Clear Logs Button
+document.getElementById("clearLogsBtn").addEventListener("click", async () => {
+  if (!confirm("Are you sure you want to delete all logs?")) return;
+  try {
+    const res = await fetch("/api/clear_logs", { method: "DELETE" });
+    if (res.ok) {
+      alert("✅ All logs cleared successfully!");
+      refreshLogs();
+    } else {
+      alert("⚠️ Failed to clear logs");
+    }
+  } catch (err) {
+    alert("❌ Error connecting to server");
+    console.error(err);
+  }
+});
+</script>
+
+{% endblock %}

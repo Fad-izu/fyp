@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login | Smart IKM Parking</title>
+<style>
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  position: relative;
+}
+
+/* 🔙 Top-left Back Button */
+.back-top {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #38bdf8;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #38bdf8;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+.back-top:hover {
+  background: #38bdf8;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* 🔐 Login Box */
+.login-box {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+  backdrop-filter: blur(12px);
+  width: 380px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.login-box h2 {
+  margin-bottom: 25px;
+  font-size: 1.8em;
+  color: #38bdf8;
+  text-shadow: 0 0 10px #38bdf8;
+}
+
+/* 🧾 Form Inputs */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+input {
+  width: 90%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 1em;
+  outline: none;
+  transition: 0.3s;
+}
+input:focus {
+  box-shadow: 0 0 10px #38bdf8;
+}
+input::placeholder { color: #ccc; }
+
+/* ✅ Centered Button */
+button {
+  width: 90%;
+  background: #38bdf8;
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-top: 15px;
+}
+button:hover {
+  background: #0ea5e9;
+  transform: scale(1.05);
+}
+</style>
+</head>
+<body>
+  <!-- Back Button -->
+  <a href="/index" class="back-top">← Back</a>
+
+  <div class="login-box">
+    <h2>🔐 Admin Login</h2>
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
